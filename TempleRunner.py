@@ -5,7 +5,7 @@ import Objects
 import Utils
 
 
-def main():
+def TestingCode():
     print("Hello World!")
 
     # Created an Object and print it out
@@ -26,6 +26,19 @@ def main():
     else:
         coin = "Tails"
     print("Coin Result: " + coin)
+
+
+def main():
+    testingMode = 1
+    grid = Objects.GameGrid()
+    grid.RandomizeLevel()
+    if testingMode == 0:
+        grid.ShowAllObjects()
+        tile = grid.GetTileAt(6,6)
+        print("Got a tile at 6,6: " + tile.GetString())
+    elif testingMode == 1:
+        grid.ShowGrid()
+
 
 
 
