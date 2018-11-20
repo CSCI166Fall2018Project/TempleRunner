@@ -15,9 +15,11 @@ class GameGrid:
         self.TrapDoors = []
         # Player starts at (0,0)
         self.Player = Player(0, 0)
+        self.ExitDoor = ExitDoor(9, 9)
 
     def GetSize(self):
         return self.Size
+
     def GetDimensions(self):
         return self.Dimensions
 
@@ -76,6 +78,10 @@ class GameGrid:
         playerX, playerY = self.Player.GetCoords()
         if playerX == pX and playerY == pY:
             return self.Player
+        # Then check the exit door
+        exitX, exitY = self.ExitDoor.GetCoords()
+        if exitX == pX and exitY == pY:
+            return self.ExitDoor
         # then check the most likely culprits
         for tile in self.Tiles:
             x, y = tile.GetCoords()
@@ -94,14 +100,17 @@ class GameGrid:
             if x == pX and y == pY:
                 return dart
 
+    # Displays the Whole grid by accessing GetTile() from all tiles
+    # Displays the
     def ShowGrid(self):
         finalString = ""
         # Handle Columns
-        for y in range(0, self.Size, 1):
+        for y in range(self.Size, -1, -1):
             # Handle Rows
             for x in range(0, self.Size, 1):
-                tile = self.GetTileAt(x,y)
-                finalString += tile.GetTile()
+                tile = self.GetTileAt(x, y)
+                if tile:
+                    finalString += tile.GetTile()
             finalString += "\n\r"
         print(finalString)
 
@@ -115,27 +124,30 @@ class GameEngine:
         # Create a Random grid to start
         self.Grid.RandomizeLevel()
 
-    def GetValidMoves(self):
+    def DisplayGameState(self):
+        self.Grid.ShowGrid()
+        self.DescribeSurroundings()
 
-        valid = []
+    def GetSurroundingTiles(self):
+
+        tiles = []
         # Get player Coordinates
-        pX, pY = self.Grid.Player.Coords
+        pX, pY = self.Grid.Player.GetCoords()
         # Get Tiles around player
-        nBlock = self.Grid.GetTileAt(pX,pY+1)
-        eBlock = self.Grid.GetTileAt(pX+1,pY)
-        sBlock = self.Grid.GetTileAt(pX,pY-1)
-        wBlock = self.Grid.GetTileAt(pX-1,pY)
-        # Test for walls
-        if nBlock and nBlock is not Wall:
-            valid.append(EnumDirection.NORTH)
-        if eBlock and eBlock is not Wall:
-            valid.append(EnumDirection.EAST)
-        if sBlock and sBlock is not Wall:
-            valid.append(EnumDirection.SOUTH)
-        if wBlock and wBlock is not Wall:
-            valid.append(EnumDirection.WEST)
-        # Return the valid moves array
-        return valid
+        nBlock = self.Grid.GetTileAt(pX, pY+1)
+        eBlock = self.Grid.GetTileAt(pX+1, pY)
+        sBlock = self.Grid.GetTileAt(pX, pY-1)
+        wBlock = self.Grid.GetTileAt(pX-1, pY)
+        if nBlock:
+            tiles.append(nBlock)
+        if eBlock:
+            tiles.append(eBlock)
+        if sBlock:
+            tiles.append(sBlock)
+        if wBlock:
+            tiles.append(wBlock)
+        # Return the tiles array
+        return tiles
 
     def GetValidDirections(self):
 
@@ -159,6 +171,16 @@ class GameEngine:
         # Return the valid moves array
         return valid
 
+    def DescribeSurroundings(self):
+        count = 0
+        directions = self.GetValidDirections()
+        tiles = self.GetSurroundingTiles()
+        for t in tiles:
+            print(t.Describe(directions[count]))
+            count += 1
+
+
+    # NOT TO BE USED STANDALONE
     def MovePlayer(self, direction):
         if direction == EnumDirection.NORTH:
             # Go North

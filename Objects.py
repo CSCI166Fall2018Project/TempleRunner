@@ -24,8 +24,6 @@ class EnumDirection:
     STR_SOUTH = "SOUTH"
     STR_WEST = "WEST"
 
-
-
 # Tile Class is the basic floor tile.
 class Tile:
     def __init__(self, x, y):
@@ -46,6 +44,16 @@ class Tile:
     def GetTile(self):
         return "[ ]"
 
+    def Describe(self, dir):
+        r = Utils.RandBetween(0, 2)
+        if r is 0:
+            return "To your "+dir+" lies more plain clay tiles. Appears to be safe."
+        if r is 1:
+            return dir+"-bound you see a clear passageway to the next room."
+        if r is 2:
+            return "You gaze "+dir+"-ward to see a well worn passage."
+
+
 # Wall to block player movement
 class Wall(Tile):
     def __init__(self, x, y):
@@ -57,10 +65,19 @@ class Wall(Tile):
     def GetTile(self):
         return "[#]"
 
+    def Describe(self, dir):
+        r = Utils.RandBetween(0, 2)
+        if r is 0:
+            return "Examining to room, you look to the "+dir+" to see a solid wall."
+        if r is 1:
+            return "Rubble has collapsed and closed the tunnel leading "+dir+"."
+        if r is 2:
+            return "Try to squeeze through a hole in the "+dir+" wall, but cannot fit through."
+
 # Dart Trap to kill player unless ran over
 class TrapDarts(Tile):
     def __init__(self, x, y):
-        self.Name = "TrapDarts";
+        self.Name = "TrapDarts"
         self.posX = x
         self.posY = y
         self.TransitionChance = [0.6, 0.1, 1.0]
@@ -68,10 +85,19 @@ class TrapDarts(Tile):
     def GetTile(self):
         return "[!]"
 
+    def Describe(self, dir):
+        r = Utils.RandBetween(0, 2)
+        if r is 0:
+            return "While looking "+dir+", you notice the ceiling has open holes..."
+        if r is 1:
+            return dir+"-bound you see a passage, occupied by a corpse with a several darts embedded in him."
+        if r is 2:
+            return "You look toward the "+dir+" hallway to see a many raised tiles and small dart-sized openings in the walls..."
+
 # Trap Door with increased chance to kill player
 class TrapDoor(Tile):
     def __init__(self, x, y):
-        self.Name = "TrapDoor";
+        self.Name = "TrapDoor"
         self.posX = x
         self.posY = y
         self.TransitionChance = [0.7, 0.2, 0.5]
@@ -79,6 +105,28 @@ class TrapDoor(Tile):
     def GetTile(self):
         return "[/]"
 
+    def Describe(self, dir):
+        r = Utils.RandBetween(0, 2)
+        if r is 0:
+            return "You decide to inspect " + dir + "-ward, and notice the floor has a single slit in the middle.\n\rThe floor tile feels shaky..."
+        if r is 1:
+            return "Taking a cautious step towards the "+dir+" passage, the floor gives under your feet.\n\rRecoiling, you see the floor rise back into position.."
+        if r is 2:
+            return "The " + dir + "-bound hallway is narrow, and some of the floor tiles appear to be barely suspended in place..."
+
+# Exit Door, player wins if they reach the exit
+class ExitDoor(Tile):
+    def __init__(self, x, y):
+        self.Name = "Exit Door"
+        self.posX = x
+        self.posY = y
+        self.TransitionChance = [1.0, 1.0, 1.0]
+
+    def GetTile(self):
+        return "[E]"
+
+    def Describe(self, dir):
+        return "Looking " + dir + "-ward, you see light shining through an archway that appears to lead outside."
 
 class Player:
     def __init__(self, X, Y):
