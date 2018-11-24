@@ -1,135 +1,44 @@
 from Objects import *
 
-class GameGrid:
-    def __init__(self):
-        # Size of the grid
-        self.Size = 10
-
-        # Total number of blocks
-        self.Dimensions = self.Size * self.Size
-
-        # Arrays of Tiles, Walls, and Traps
-        self.Tiles = []
-        self.Walls = []
-        self.TrapDarts = []
-        self.TrapDoors = []
-        # Player starts at (0,0)
-        self.Player = Player(0, 0)
-        self.ExitDoor = ExitDoor(9, 9)
-
-    def GetSize(self):
-        return self.Size
-
-    def GetDimensions(self):
-        return self.Dimensions
-
-    def RandomizeLevel(self):
-        # Handle Columns
-        for y in range(0, self.Size, 1):
-            # Handle Rows
-            for x in range(0, self.Size, 1):
-                # print(str(x) + "," + str(y))
-                # Test for what tile we should create at what position
-
-                # 20% chance of Trap Door
-                doorChance = Utils.TryChance(0.20)
-                if doorChance:
-                    self.TrapDoors.append(TrapDoor(x, y))
-                    continue
-
-                # 25% of Darts
-                dartChance = Utils.TryChance(0.35)
-                if dartChance:
-                    self.TrapDarts.append(TrapDarts(x, y))
-                    continue
-
-                # 30% chance of a wall
-                wallChance = Utils.TryChance(0.7)
-                if wallChance:
-                    self.Walls.append(Wall(x, y))
-                    continue
-
-                # 40% chance to place a tile
-                self.Tiles.append(Tile(x, y))
-                continue
-
-    def ShowAllObjects(self):
-        # Output all the objects
-        print("Tiles: " + str(len(self.Tiles)))
-        for obj in self.Tiles:
-            print(obj.GetString())
-
-        print("Walls: " + str(len(self.Walls)))
-        for obj in self.Walls:
-            print(obj.GetString())
-
-        print("Darts: " + str(len(self.TrapDarts)))
-        for obj in self.TrapDarts:
-            print(obj.GetString())
-
-        print("Doors: " + str(len(self.TrapDoors)))
-        for obj in self.TrapDoors:
-            print(obj.GetString())
-
-    # Check all objects in the grid to find
-    # the object at the given coordinates
-    def GetTileAt(self, pX, pY):
-        # Try to find the player
-        playerX, playerY = self.Player.GetCoords()
-        if playerX == pX and playerY == pY:
-            return self.Player
-        # Then check the exit door
-        exitX, exitY = self.ExitDoor.GetCoords()
-        if exitX == pX and exitY == pY:
-            return self.ExitDoor
-        # then check the most likely culprits
-        for tile in self.Tiles:
-            x, y = tile.GetCoords()
-            if x == pX and y == pY:
-                return tile
-        for wall in self.Walls:
-            x, y = wall.GetCoords()
-            if x == pX and y == pY:
-                return wall
-        for door in self.TrapDoors:
-            x, y = door.GetCoords()
-            if x == pX and y == pY:
-                return door
-        for dart in self.TrapDarts:
-            x, y = dart.GetCoords()
-            if x == pX and y == pY:
-                return dart
-
-    # Displays the Whole grid by accessing GetTile() from all tiles
-    # Displays the
-    def ShowGrid(self):
-        finalString = ""
-        # Handle Columns
-        for y in range(self.Size, -1, -1):
-            # Handle Rows
-            for x in range(0, self.Size, 1):
-                tile = self.GetTileAt(x, y)
-                if tile:
-                    finalString += tile.GetTile()
-            finalString += "\n\r"
-        print(finalString)
-
-
 class GameEngine:
     def __init__(self):
         # Grid contains all tiles, and the player
         self.Grid = GameGrid()
 
+        # Game State
+        self.GameState = EnumGameState.PLAYER_ALIVE
+
+        # Save the players choice of cadence and direction
+        self.PlayerChoice = ()
+
     def StartGame(self):
         # Create a Random grid to start
         self.Grid.RandomizeLevel()
 
+        # Gameplay Loop
+        while self.GameState == EnumGameState.PLAYER_ALIVE:
+            # Show the grid locations
+            self.DisplayGameState()
+            # Ask player what they want to do
+            self.GetPlayerMove()
+            # Process the move, collisions, and possible change of game state
+            self.ProcessPlayerMove()
+            # Reset the player choice
+            self.PlayerChoice = ()
+
+        if self.GameState == EnumGameState.PLAYER_DEAD:
+            print("You have died! Game Over.")
+
+        if self.GameState == EnumGameState.PLAYER_WON:
+            print("You have escaped with the treasure!")
+
+
     def DisplayGameState(self):
         self.Grid.ShowGrid()
-        self.DescribeSurroundings()
+        if self.Grid.ShowDescriptions:
+            self.DescribeSurroundings()
 
     def GetSurroundingTiles(self):
-
         tiles = []
         # Get player Coordinates
         pX, pY = self.Grid.Player.GetCoords()
@@ -160,16 +69,17 @@ class GameEngine:
         sBlock = self.Grid.GetTileAt(pX,pY-1)
         wBlock = self.Grid.GetTileAt(pX-1,pY)
         # Test for walls
-        if nBlock and nBlock is not Wall:
+        if nBlock and not isinstance(nBlock, Wall):
             valid.append(EnumDirection.STR_NORTH)
-        if eBlock and eBlock is not Wall:
+        if eBlock and not isinstance(eBlock, Wall):
             valid.append(EnumDirection.STR_EAST)
-        if sBlock and sBlock is not Wall:
+        if sBlock and not isinstance(sBlock, Wall):
             valid.append(EnumDirection.STR_SOUTH)
-        if wBlock and wBlock is not Wall:
+        if wBlock and not isinstance(wBlock, Wall):
             valid.append(EnumDirection.STR_WEST)
         # Return the valid moves array
         return valid
+
 
     def DescribeSurroundings(self):
         count = 0
@@ -179,27 +89,123 @@ class GameEngine:
             print(t.Describe(directions[count]))
             count += 1
 
+    def GetPlayerMove(self):
 
-    # NOT TO BE USED STANDALONE
+        # Get a reference to the player
+        player = self.Grid.Player
+
+        # Flow control, ensure player makes a valid choice
+        validChoice = False
+
+        # Let the player know they cannot run
+        if player.Exhausted:
+            print("You are tired, and only WALK or SNEAK. In " + str(player.ExhaustedTurns) + " turns you can run again.")
+
+        print("How would you like to proceed?  \n\r")
+
+        validCadences = []
+        # Handle when the player is exhausted
+        if player.Exhausted:
+            print("Cadences: [SNEAK, WALK]")
+            validCadences = [EnumCadence.STR_SNEAK, EnumCadence.STR_WALK ]
+        else:
+            print("Cadences: [SNEAK, WALK, RUN]")
+            validCadences = [EnumCadence.STR_SNEAK, EnumCadence.STR_WALK, EnumCadence.STR_RUN ]
+
+        validDirections = self.GetValidDirections()
+        directionsString = "Directions: ["
+        for i in range(len(validDirections)):
+            if i is len(validDirections)-1:
+                directionsString += validDirections[i]
+            else:
+                directionsString += validDirections[i] + ", "
+        directionsString += "]\n\r"
+        print(directionsString)
+
+        # Only exit the loop when choice is validated
+        while not validChoice:
+            # Get the input from player
+            tempChoice = input("Type the Cadence and Direction, ex. run north, sneak east, or walk west \n\r|>")
+
+            # Check input against valid inputs
+            choiceString = tempChoice.split(" ")
+
+            playerCandece = ""
+            playerDirection = ""
+
+            for cad in validCadences:
+                if choiceString[0].upper() in cad:
+                    # Selected Cadence
+                    playerCandece = cad
+
+            for dir in validDirections:
+                if choiceString[1].upper() in dir:
+                    #Selected Direction
+                    playerDirection = dir;
+
+            if playerCandece is not "" and playerDirection is not "":
+                # Entered a valid choice for both
+                validChoice = True
+                # Set the choice at class level to operate
+                self.PlayerChoice = (playerCandece, playerDirection)
+            else:
+                print("Unable to parse your choice, try again.")
+
+        print("You decide to " + self.PlayerChoice[0] + " in the direction of " + self.PlayerChoice[1])
+
+
+    def ProcessPlayerMove(self):
+
+        # Split the tuple into parts
+        playerCadance, playerDirection = self.PlayerChoice
+
+        # Get the Destination Tile
+        destTile = self.Grid.GetTileFromPlayerDirection(playerDirection)
+
+        # Get the cadence index of the tile
+        cadenceIndex = Utils.ConvertCadencetoInt(playerCadance)
+        chance = destTile.TransitionChance[cadenceIndex]
+
+        # Test the players luck against the tile
+        success = Utils.TryChance(chance)
+
+        # Success means moving the player
+        if success:
+            # If the player ran, instruct the player object to update itself.
+            if playerCadance is EnumCadence.STR_RUN:
+                self.Grid.Player.Run()
+            else:
+                self.Grid.Player.WalkOrSneak()
+            # Finally move the player
+            self.MovePlayer(playerDirection)
+
+            # Check if the player has won
+            if self.Grid.HasPlayerReachedExit():
+                self.GameState = EnumGameState.PLAYER_WON
+        else:
+            # Not successful, the player has died
+            self.GameState = EnumGameState.PLAYER_DEAD
+
+    # Moves the player according to the direction
     def MovePlayer(self, direction):
-        if direction == EnumDirection.NORTH:
+        if direction == EnumDirection.STR_NORTH:
             # Go North
-            xPos, yPos = self.Player.Coords
+            xPos, yPos = self.Grid.Player.GetCoords()
             yPos += 1
-            self.Player = (xPos, yPos)
-        elif direction == EnumDirection.EAST:
+            self.Grid.Player.SetCoords(xPos, yPos)
+        elif direction == EnumDirection.STR_EAST:
             # Go North
-            xPos, yPos = self.Player.Coords
+            xPos, yPos = self.Grid.Player.GetCoords()
             xPos += 1
-            self.Player = (xPos, yPos)
-        elif direction == EnumDirection.SOUTH:
+            self.Grid.Player.SetCoords(xPos, yPos)
+        elif direction == EnumDirection.STR_SOUTH:
             # Go North
-            xPos, yPos = self.Player.Coords
+            xPos, yPos = self.Grid.Player.GetCoords()
             yPos -= 1
-            self.Player = (xPos, yPos)
-        elif direction == EnumDirection.WEST:
+            self.Grid.Player.SetCoords(xPos, yPos)
+        elif direction == EnumDirection.STR_WEST:
             # Go North
-            xPos, yPos = self.Player.Coords
+            xPos, yPos = self.Grid.Player.GetCoords()
             xPos -= 1
-            self.Player = (xPos, yPos)
+            self.Grid.Player.SetCoords(xPos, yPos)
 

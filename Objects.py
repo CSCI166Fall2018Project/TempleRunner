@@ -5,6 +5,8 @@ import Utils
 # Create new Classes here
 # ================================
 
+# Enums
+# Use these classes to represent single values,
 class EnumCadence:
     SNEAK = 0
     WALK = 1
@@ -12,6 +14,7 @@ class EnumCadence:
     STR_SNEAK = "SNEAK"
     STR_WALK = "WALK"
     STR_RUN = "RUN"
+
 
 
 class EnumDirection:
@@ -23,6 +26,12 @@ class EnumDirection:
     STR_EAST = "EAST"
     STR_SOUTH = "SOUTH"
     STR_WEST = "WEST"
+
+class EnumGameState:
+    PLAYER_ALIVE = 0
+    PLAYER_DEAD = 1
+    PLAYER_WON = 2
+
 
 # Tile Class is the basic floor tile.
 class Tile:
@@ -148,6 +157,10 @@ class Player:
     def GetCoords(self):
         return self.posX, self.posY
 
+    def SetCoords(self, x, y):
+        self.posX = x
+        self.posY = y
+
     def GetTile(self):
         return "[P]"
 
@@ -181,3 +194,150 @@ class Player:
     def Run(self):
         # Test if we exhausted the player
         self.TryRun()
+
+
+class GameGrid:
+    def __init__(self, show_desc=False):
+        # Size of the grid
+        self.Size = 5
+
+        # Total number of blocks
+        self.Dimensions = self.Size * self.Size
+
+        # Arrays of Tiles, Walls, and Traps
+        self.Tiles = []
+        self.Walls = []
+        self.TrapDarts = []
+        self.TrapDoors = []
+
+        # Player starts at (0, 0)
+        self.Player = Player(0, 0)
+
+        # Exit door is the goal (self.Size, self.Size)
+        self.ExitDoor = ExitDoor(self.Size-1, self.Size-1)
+
+        # Set if we describe the environment at each step
+        self.ShowDescriptions = show_desc
+
+    def GetSize(self):
+        return self.Size
+
+    def GetDimensions(self):
+        return self.Dimensions
+
+    def RandomizeLevel(self):
+        # Handle Columns
+        for y in range(0, self.Size, 1):
+            # Handle Rows
+            for x in range(0, self.Size, 1):
+                # print(str(x) + "," + str(y))
+                # Test for what tile we should create at what position
+
+                # 20% chance of Trap Door
+                doorChance = Utils.TryChance(0.20)
+                if doorChance:
+                    self.TrapDoors.append(TrapDoor(x, y))
+                    continue
+
+                # 25% of Darts
+                dartChance = Utils.TryChance(0.35)
+                if dartChance:
+                    self.TrapDarts.append(TrapDarts(x, y))
+                    continue
+
+                # 30% chance of a wall
+                wallChance = Utils.TryChance(0.7)
+                if wallChance:
+                    self.Walls.append(Wall(x, y))
+                    continue
+
+                # 40% chance to place a tile
+                self.Tiles.append(Tile(x, y))
+                continue
+
+    # Prints out all the objects in a long list
+    def ShowAllObjects(self):
+        # Output all the objects
+        print("Tiles: " + str(len(self.Tiles)))
+        for obj in self.Tiles:
+            print(obj.GetString())
+
+        print("Walls: " + str(len(self.Walls)))
+        for obj in self.Walls:
+            print(obj.GetString())
+
+        print("Darts: " + str(len(self.TrapDarts)))
+        for obj in self.TrapDarts:
+            print(obj.GetString())
+
+        print("Doors: " + str(len(self.TrapDoors)))
+        for obj in self.TrapDoors:
+            print(obj.GetString())
+
+    # Check all objects in the grid to find
+    # the object at the given coordinates
+    def GetTileAt(self, pX, pY):
+        # Try to find the player
+        playerX, playerY = self.Player.GetCoords()
+        if playerX == pX and playerY == pY:
+            return self.Player
+        # Then check the exit door
+        exitX, exitY = self.ExitDoor.GetCoords()
+        if exitX == pX and exitY == pY:
+            return self.ExitDoor
+        # then check the most likely culprits
+        for tile in self.Tiles:
+            x, y = tile.GetCoords()
+            if x == pX and y == pY:
+                return tile
+        for wall in self.Walls:
+            x, y = wall.GetCoords()
+            if x == pX and y == pY:
+                return wall
+        for door in self.TrapDoors:
+            x, y = door.GetCoords()
+            if x == pX and y == pY:
+                return door
+        for dart in self.TrapDarts:
+            x, y = dart.GetCoords()
+            if x == pX and y == pY:
+                return dart
+
+    def GetTileFromPlayerDirection(self, dir):
+        # Try to find the player
+        playerX, playerY = self.Player.GetCoords()
+
+        if dir is EnumDirection.STR_NORTH:
+            return self.GetTileAt(playerX, playerY + 1)
+        elif dir is EnumDirection.STR_EAST:
+            return self.GetTileAt(playerX + 1,playerY)
+        elif dir is EnumDirection.STR_SOUTH:
+            return self.GetTileAt(playerX,playerY - 1)
+        elif dir is EnumDirection.STR_EAST:
+            return self.GetTileAt(playerX - 1, playerY)
+        else:
+            return
+
+
+    # Displays the Whole grid by accessing GetTile() from all tiles
+    def ShowGrid(self):
+        finalString = ""
+        # Handle Columns
+        for y in range(self.Size, -1, -1):
+            # Handle Rows
+            for x in range(0, self.Size, 1):
+                tile = self.GetTileAt(x, y)
+                if tile:
+                    finalString += tile.GetTile()
+            finalString += "\n\r"
+        print(finalString)
+
+    def HasPlayerReachedExit(self):
+        # Check if we won by examining the Exit door
+        exitX, exitY = self.ExitDoor.GetCoords()
+        playerX, playerY = self.Player.GetCoords()
+
+        if exitX is playerX and exitY is playerY:
+            return True
+        else:
+            return False
