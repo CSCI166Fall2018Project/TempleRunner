@@ -81,7 +81,7 @@ class Wall(Tile):
         if r is 1:
             return "Rubble has collapsed and closed the tunnel leading "+dir+"."
         if r is 2:
-            return "Try to squeeze through a hole in the "+dir+" wall, but cannot fit through."
+            return "You try to squeeze through a hole in the "+dir+" wall, but cannot fit through. It's impassable."
 
 # Dart Trap to kill player unless ran over
 class TrapDarts(Tile):
@@ -197,7 +197,7 @@ class Player:
 
 
 class GameGrid:
-    def __init__(self, show_desc=False):
+    def __init__(self, show_desc=True):
         # Size of the grid
         self.Size = 5
 
@@ -239,14 +239,14 @@ class GameGrid:
                     self.TrapDoors.append(TrapDoor(x, y))
                     continue
 
-                # 25% of Darts
+                # 35% of Darts
                 dartChance = Utils.TryChance(0.35)
                 if dartChance:
                     self.TrapDarts.append(TrapDarts(x, y))
                     continue
 
                 # 30% chance of a wall
-                wallChance = Utils.TryChance(0.7)
+                wallChance = Utils.TryChance(0.3)
                 if wallChance:
                     self.Walls.append(Wall(x, y))
                     continue

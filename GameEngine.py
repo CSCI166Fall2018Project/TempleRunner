@@ -80,13 +80,39 @@ class GameEngine:
         # Return the valid moves array
         return valid
 
+    # Gets the directions of tiles for descriptive purposes
+    def GetDescriptiveDirections(self):
+
+        valid = []
+        # Get player Coordinates
+        pX, pY = self.Grid.Player.GetCoords()
+        # Get Tiles around player
+        nBlock = self.Grid.GetTileAt(pX,pY+1)
+        eBlock = self.Grid.GetTileAt(pX+1,pY)
+        sBlock = self.Grid.GetTileAt(pX,pY-1)
+        wBlock = self.Grid.GetTileAt(pX-1,pY)
+        # Test for walls
+        if nBlock:
+            valid.append(EnumDirection.STR_NORTH)
+        if eBlock:
+            valid.append(EnumDirection.STR_EAST)
+        if sBlock:
+            valid.append(EnumDirection.STR_SOUTH)
+        if wBlock:
+            valid.append(EnumDirection.STR_WEST)
+        # Return the valid moves array
+        return valid
+
+
+
 
     def DescribeSurroundings(self):
         count = 0
-        directions = self.GetValidDirections()
+        directions = self.GetDescriptiveDirections()
         tiles = self.GetSurroundingTiles()
         for t in tiles:
-            print(t.Describe(directions[count]))
+            if len(directions) >= count:
+                print(t.Describe(directions[count]))
             count += 1
 
     def GetPlayerMove(self):
