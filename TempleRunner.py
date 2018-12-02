@@ -18,7 +18,7 @@ def main():
 
             if "TEST" in choice.upper():
                 print("Test Value Iteration?")
-                choice = raw_input("Choose: value")
+                choice = raw_input("Choose from: value\n\r|> ")
                 if "VALUE" in choice.upper():
                     game_eng = GameEngine()
                     iterationAgent = ValueIterationAgent(game_eng)

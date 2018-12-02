@@ -12,9 +12,10 @@ class GameEngine:
         # Save the players choice of cadence and direction
         self.PlayerChoice = ()
 
-    def StartGame(self):
         # Create a Random grid to start
         self.Grid.RandomizeLevel()
+
+    def StartGame(self):
 
         # Gameplay Loop
         while self.GameState == EnumGameState.PLAYER_ALIVE:
