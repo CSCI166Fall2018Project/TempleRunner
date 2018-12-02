@@ -254,6 +254,34 @@ class GameGrid:
                 # 40% chance to place a tile
                 self.Tiles.append(Tile(x, y))
                 continue
+    def Level1(self):
+        self.Tiles.append(Tile(0,0))
+        self.TrapDarts.append(TrapDarts(0,1))
+        self.TrapDoors.append(TrapDoor(0,2))
+        self.TrapDarts.append(TrapDarts(0,3))
+        self.Tiles.append(Tile(0,4))
+        self.Tiles.append(Tile(1,0))
+        self.Walls.append(Wall(1,1))
+        self.Walls.append(Wall(1,2))
+        self.Walls.append(Wall(1,3))
+        self.TrapDoors.append(TrapDoor(1,4))
+        self.Tiles.append(Tile(2,0))
+        self.TrapDarts.append(TrapDarts(2,1))
+        self.Tiles.append(Tile(2,2))
+        self.Walls.append(Wall(2,3))
+        self.TrapDarts.append(TrapDarts(2,4))
+        self.Tiles.append(Tile(3,0))
+        self.Walls.append(Wall(3,1))
+        self.Tiles.append(Tile(3,2))
+        self.Walls.append(Wall(3,3))
+        self.TrapDoors.append(TrapDoor(3,4))
+        self.Walls.append(Wall(4,0))
+        self.Tiles.append(Tile(4,1))
+        self.Tiles.append(Tile(4,2))
+        self.TrapDarts.append(TrapDarts(4,3))
+        self.Tiles.append(Tile(4,4))
+        
+
 
     # Prints out all the objects in a long list
     def ShowAllObjects(self):

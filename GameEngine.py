@@ -13,7 +13,7 @@ class GameEngine:
         self.PlayerChoice = ()
 
         # Create a Random grid to start
-        self.Grid.RandomizeLevel()
+        self.Grid.Level1()
 
     def StartGame(self):
 
