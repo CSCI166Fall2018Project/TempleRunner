@@ -165,7 +165,7 @@ class GameEngine:
         # Only exit the loop when choice is validated
         while not validChoice:
             # Get the input from player
-            tempChoice = input("Type the Cadence and Direction, ex. run north, sneak east, or walk west \n\r|>")
+            tempChoice = raw_input("Type the Cadence and Direction, ex. run north, sneak east, or walk west \n\r|>")
 
             # Check input against valid inputs
             choiceString = tempChoice.split(" ")
