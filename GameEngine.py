@@ -45,14 +45,12 @@ class GameEngine:
 
     # Examines the state of the game, and
     # returns a reward based on if the player has won or not
-    def GetReward(self):
+    def GetReward(self, state, cadence):
         finalReward = 0
 
-        # Negative reward if the player is dead
-        if self.GameState == EnumGameState.PLAYER_DEAD:
-            finalReward = finalReward - 100
-        elif self.Grid.Player.GetCoords() == self.Grid.ExitDoor.GetCoords():
-            finalReward = finalReward + 100
+        # Player rewarded for reaching the exit door
+        if isinstance(state, ExitDoor):
+            finalReward += 100
 
         return finalReward
 
@@ -101,6 +99,11 @@ class GameEngine:
 
     # Returns the next state when taking the action, along with the probability of getting there
     def GetTransitionStateAndProb(self, direction, cadence):
+
+        # If the player has reached the Exit Door, they may take no actions
+        if self.Grid.Player.GetCoords() == self.Grid.ExitDoor.GetCoords():
+            return None, 1.0
+
         # Get the Destination Tile
         destTile = self.Grid.GetTileFromPlayerDirection(direction)
 
@@ -161,7 +164,8 @@ class GameEngine:
         tiles = self.GetSurroundingTiles()
         for t in tiles:
             if len(directions) >= count:
-                print(t.Describe(directions[count]))
+                if t.__class__.__name__ != "Wall":
+                    print(t.Describe(directions[count]))
             count += 1
 
     def GetPlayerMove(self):
@@ -171,10 +175,18 @@ class GameEngine:
 
         # Flow control, ensure player makes a valid choice
         validChoice = False
+        
+        # Space out lines to preserve grid location in terminal window
+        i = 4 - len(self.GetValidDirections())
+        while i > 0:
+            print("")
+            i -= 1
 
         # Let the player know they cannot run
         if player.Exhausted:
             print("You are tired, and only WALK or SNEAK. In " + str(player.ExhaustedTurns) + " turns you can run again.")
+        else:
+            print("")
 
         print("How would you like to proceed?  \n\r")
 

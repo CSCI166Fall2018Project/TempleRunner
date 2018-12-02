@@ -1,6 +1,8 @@
 # Import other Python files
 from GameEngine import *
 from ValueIterationAgent import *
+from PolicyIteration import *
+from QLearningAgents import *
 
 def main():
 
@@ -20,16 +22,18 @@ def main():
                 game_eng.StartGame()
 
             if "TEST" in choice.upper():
-                print("Test Value or Policy Iteration?")
-                choice = raw_input("Choose from: value or policy \n\r|> ")
+                print("Test Value Iteration, Policy Iteration, or Q-Learning?")
+                choice = raw_input("Choose from: value, policy, qlearn \n\r|> ")
                 if "VALUE" in choice.upper():
                     game_eng = GameEngine()
                     iterationAgent = ValueIterationAgent(game_eng)
                     iterationAgent.ShowValuesInGrid()
                 if "POLICY" in choice.upper():
                     game_eng = GameEngine()
-                    policyIterationAgent = PolicyIteation(game_eng)
-            
+                    policyIterationAgent = PolicyIterationAgent(game_eng)
+                if "QLEARN" in choice.upper():
+                    game_eng = GameEngine()
+                    qlearningAgent = QLearningAgent(game_eng)
         else:
             # Tell them to choose again
             print("Incorrect choice.")
