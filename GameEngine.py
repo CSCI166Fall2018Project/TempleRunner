@@ -13,7 +13,11 @@ class GameEngine:
         self.PlayerChoice = ()
 
         # Create a Random grid to start
-        self.Grid.Level1()
+        choice = raw_input("Choose level: random or default \n\r|> ")
+        if "RANDOM" in choice.upper():
+            self.Grid.RandomizeLevel()
+        elif "DEFAULT" in choice.upper():
+            self.Grid.Level1()
 
     def StartGame(self):
 
@@ -212,7 +216,7 @@ class GameEngine:
         # Only exit the loop when choice is validated
         while not validChoice:
             # Get the input from player
-            tempChoice = raw_input("Type the Cadence and Direction, ex. run north, sneak east, or walk west \n\r|>")
+            tempChoice = raw_input("Type the Cadence and Direction, ex. run north, sneak east, or walk west \n\r|> ")
 
             # Check input against valid inputs
             choiceString = tempChoice.split(" ")
