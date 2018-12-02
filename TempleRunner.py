@@ -1,6 +1,7 @@
 # Import other Python files
 from GameEngine import *
 from ValueIterationAgent import *
+from PolicyIteration import *
 from QLearningAgents import *
 
 def main():
@@ -29,7 +30,7 @@ def main():
                     iterationAgent.ShowValuesInGrid()
                 if "POLICY" in choice.upper():
                     game_eng = GameEngine()
-                    policyIterationAgent = PolicyIteration(game_eng)
+                    policyIterationAgent = PolicyIterationAgent(game_eng)
                 if "QLEARN" in choice.upper():
                     game_eng = GameEngine()
                     qlearningAgent = QLearningAgent(game_eng)
