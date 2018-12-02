@@ -161,7 +161,8 @@ class GameEngine:
         tiles = self.GetSurroundingTiles()
         for t in tiles:
             if len(directions) >= count:
-                print(t.Describe(directions[count]))
+                if t.__class__.__name__ != "Wall":
+                    print(t.Describe(directions[count]))
             count += 1
 
     def GetPlayerMove(self):
@@ -171,10 +172,18 @@ class GameEngine:
 
         # Flow control, ensure player makes a valid choice
         validChoice = False
+        
+        # Space out lines to preserve grid location in terminal window
+        i = 4 - len(self.GetValidDirections())
+        while i > 0:
+            print("")
+            i -= 1
 
         # Let the player know they cannot run
         if player.Exhausted:
             print("You are tired, and only WALK or SNEAK. In " + str(player.ExhaustedTurns) + " turns you can run again.")
+        else:
+            print("")
 
         print("How would you like to proceed?  \n\r")
 
