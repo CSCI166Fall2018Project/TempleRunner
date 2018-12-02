@@ -109,7 +109,7 @@ class TrapDoor(Tile):
         self.Name = "TrapDoor"
         self.posX = x
         self.posY = y
-        self.TransitionChance = [0.7, 0.2, 0.5]
+        self.TransitionChance = [0.5, 0.2, 0.7]
 
     def GetTile(self):
         return "[/]"
