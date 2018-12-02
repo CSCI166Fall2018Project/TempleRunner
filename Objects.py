@@ -325,7 +325,7 @@ class GameGrid:
     def ShowGrid(self):
         finalString = ""
         # Handle Columns
-        for y in range(self.Size, -1, -1):
+        for y in range(self.Size-1, -1, -1):
             # Handle Rows
             for x in range(0, self.Size, 1):
                 tile = self.GetTileAt(x, y)
