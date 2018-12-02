@@ -17,11 +17,15 @@ def main():
                 game_eng.StartGame()
 
             if "TEST" in choice.upper():
-                print("Test Value Iteration?")
-                choice = raw_input("Choose from: value\n\r|> ")
+                print("Test Value or Policy Iteration?")
+                choice = raw_input("Choose from: value or policy \n\r|> ")
                 if "VALUE" in choice.upper():
                     game_eng = GameEngine()
                     iterationAgent = ValueIterationAgent(game_eng)
+                if "POLICY" in choice.upper():
+                    game_eng = GameEngine()
+                    policyIterationAgent = PolicyIteation(game_eng)
+            
         else:
             # Tell them to choose again
             print("Incorrect choice.")
