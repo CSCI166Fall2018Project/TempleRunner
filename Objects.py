@@ -276,11 +276,13 @@ class GameGrid:
 
     # Check all objects in the grid to find
     # the object at the given coordinates
-    def GetTileAt(self, pX, pY):
-        # Try to find the player
-        playerX, playerY = self.Player.GetCoords()
-        if playerX == pX and playerY == pY:
-            return self.Player
+    def GetTileAt(self, pX, pY, skipPlayer=False):
+        # Skip the player when processing through AI agents
+        if not skipPlayer:
+            # Try to find the player
+            playerX, playerY = self.Player.GetCoords()
+            if playerX == pX and playerY == pY:
+                return self.Player
         # Then check the exit door
         exitX, exitY = self.ExitDoor.GetCoords()
         if exitX == pX and exitY == pY:
@@ -341,3 +343,15 @@ class GameGrid:
             return True
         else:
             return False
+
+    def GetAllTiles(self):
+        # Create array of all tiles
+        allTiles = []
+        # Handle Columns
+        for y in range(0, self.Size, 1):
+            # Handle Rows
+            for x in range(0, self.Size, 1):
+                # Skip the player tile, not factored
+                tile = self.GetTileAt(x, y, True)
+                allTiles.append(tile)
+        return allTiles

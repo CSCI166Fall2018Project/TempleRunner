@@ -1,4 +1,5 @@
 from Objects import *
+from os import *
 
 class GameEngine:
     def __init__(self):
@@ -37,6 +38,22 @@ class GameEngine:
         self.Grid.ShowGrid()
         if self.Grid.ShowDescriptions:
             self.DescribeSurroundings()
+
+    def GetAllStates(self):
+        return self.Grid.GetAllTiles()
+
+    # Examines the state of the game, and
+    # returns a reward based on if the player has won or not
+    def GetReward(self):
+        finalReward = 0
+
+        # Negative reward if the player is dead
+        if self.GameState == EnumGameState.PLAYER_DEAD:
+            finalReward = finalReward - 100
+        elif self.Grid.Player.GetCoords() == self.Grid.ExitDoor.GetCoords():
+            finalReward = finalReward + 100
+
+        return finalReward
 
     def GetSurroundingTiles(self):
         tiles = []
@@ -102,9 +119,6 @@ class GameEngine:
             valid.append(EnumDirection.STR_WEST)
         # Return the valid moves array
         return valid
-
-
-
 
     def DescribeSurroundings(self):
         count = 0
@@ -180,7 +194,7 @@ class GameEngine:
         print("You decide to " + self.PlayerChoice[0] + " in the direction of " + self.PlayerChoice[1])
 
 
-    def ProcessPlayerMove(self):
+    def ProcessPlayerMove(self, doMove=True):
 
         # Split the tuple into parts
         playerCadance, playerDirection = self.PlayerChoice
@@ -202,8 +216,12 @@ class GameEngine:
                 self.Grid.Player.Run()
             else:
                 self.Grid.Player.WalkOrSneak()
-            # Finally move the player
-            self.MovePlayer(playerDirection)
+
+            # Move the player unless the agent calls this function
+            # In that case, do not move the player.
+            if doMove:
+                # Finally move the player
+                self.MovePlayer(playerDirection)
 
             # Check if the player has won
             if self.Grid.HasPlayerReachedExit():
@@ -235,3 +253,9 @@ class GameEngine:
             xPos -= 1
             self.Grid.Player.SetCoords(xPos, yPos)
 
+    # Used by the AI Agent to shift the player while testing states
+    def PlacePlayer(self, coords):
+        # Split out the coordinates given
+        newX, newY = coords
+        # Directly update the player coordinates.
+        self.Grid.Player.SetCoords(newX, newY)
