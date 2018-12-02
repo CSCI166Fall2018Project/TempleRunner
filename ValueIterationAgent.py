@@ -26,6 +26,10 @@ class ValueIterationAgent:
                 #Loop through all states
                 for state in gameStates:
                     prime_values = []
+                    # If the state is a wall, it's terminal. Assign it 0
+                    if isinstance(state, Wall):
+                        self.values[state] = 0.00
+                        continue
                     # Place the player at this state to test their actions
                     engine.PlacePlayer(state.GetCoords())
                     # print("Testing at state:" + str(state))
