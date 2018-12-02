@@ -315,7 +315,7 @@ class GameGrid:
             return self.GetTileAt(playerX + 1,playerY)
         elif dir is EnumDirection.STR_SOUTH:
             return self.GetTileAt(playerX,playerY - 1)
-        elif dir is EnumDirection.STR_EAST:
+        elif dir is EnumDirection.STR_WEST:
             return self.GetTileAt(playerX - 1, playerY)
         else:
             return
