@@ -7,7 +7,7 @@ def main():
     choosenCorrectly = False
     while not choosenCorrectly:
         print("Play the game, or test agents?")
-        choice = input("Choose: play or test\n\r|> ")
+        choice = raw_input("Choose: play or test\n\r|> ")
 
         # Check for correct responses
         if "PLAY" in choice.upper() or "TEST" in choice.upper():
@@ -18,7 +18,7 @@ def main():
 
             if "TEST" in choice.upper():
                 print("Test Value Iteration?")
-                choice = input("Choose: value")
+                choice = raw_input("Choose: value")
                 if "VALUE" in choice.upper():
                     game_eng = GameEngine()
                     iterationAgent = ValueIterationAgent(game_eng)
