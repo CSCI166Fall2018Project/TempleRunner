@@ -40,15 +40,13 @@ class ValueIterationAgent:
                         else:
                             val_prime = probability * reward
                         prime_values.append(val_prime)
-                    self.values[state] = max(prime_values)
+                    if len(prime_values) > 0:
+                        self.values[state] = max(prime_values)
+                    else:
+                        self.values[state] = 0
 
             for key in self.values.keys():
-                print("Key: " + str(key) + " | Value: " + self.values[key])
-
-
-
-
-
+                print(str(key) + " | " + str(self.values[key]))
 
         else:
             print(" Please use the GameEngine as the first argument")
