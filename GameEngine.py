@@ -76,6 +76,40 @@ class GameEngine:
         # Return the tiles array
         return tiles
 
+    # Retrieves all directions and cadences from the players position
+    def GetAllPossibleActions(self):
+        allPossible = []
+
+        # Get all the directions we can go
+        directions = self.GetValidDirections()
+
+        # Handle when the player is exhausted
+        if self.Grid.Player.Exhausted:
+            cadences = [EnumCadence.STR_SNEAK, EnumCadence.STR_WALK]
+        else:
+            cadences = [EnumCadence.STR_SNEAK, EnumCadence.STR_WALK, EnumCadence.STR_RUN]
+
+        # For all directions
+        for dir in directions:
+            # For all Cadences
+            for cad in cadences:
+                # Append the ( Direction, Cadence )
+                allPossible.append((dir, cad))
+
+        return allPossible
+
+
+    # Returns the next state when taking the action, along with the probability of getting there
+    def GetTransitionStateAndProb(self, direction, cadence):
+        # Get the Destination Tile
+        destTile = self.Grid.GetTileFromPlayerDirection(direction)
+
+        # Get the cadence index of the tile
+        cadenceIndex = Utils.ConvertCadencetoInt(cadence)
+        chance = destTile.TransitionChance[cadenceIndex]
+
+        return destTile, chance
+
     def GetValidDirections(self):
 
         valid = []
