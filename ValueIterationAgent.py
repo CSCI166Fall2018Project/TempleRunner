@@ -35,13 +35,14 @@ class ValueIterationAgent:
                         statePrime, probability = engine.GetTransitionStateAndProb(direction, cadence)
                         # Obtain the sum of Reward(s) + Discount * (P(s'| s,a)*R(s'))
                         reward = engine.GetReward()
+                        # For the first run, sometimes the state is not in the array
                         if statePrime in values_prime.keys():
                             val_prime = probability * (reward + (self.discount * values_prime[statePrime]))
                         else:
                             val_prime = probability * reward
                         prime_values.append(val_prime)
                     if len(prime_values) > 0:
-                        self.values[state] = max(prime_values)
+                        self.values[state] = round(max(prime_values),2)
                     else:
                         self.values[state] = 0
 
@@ -59,16 +60,28 @@ class ValueIterationAgent:
             print(" Please use the GameEngine as the first argument")
             return
 
-
-
-
-
-
-
         # End Value iteration code
         return
 
-    # Incoming State should be the tile coordinates
-    # Ex. state = (4,6)
-    def getValue(self, state):
+    def ShowValuesInGrid(self):
+
+        # Show the game Grid
+        print("Game Grid:")
+        self.engine.Grid.ShowGrid()
+
+        finalString = ""
+        # Handle Columns
+        for y in range(self.engine.Grid.Size-1, -1, -1):
+            # Handle Rows
+            for x in range(0, self.engine.Grid.Size, 1):
+                tile = self.engine.Grid.GetTileAt(x, y, True)
+                if tile:
+                    finalString += "[" + str(self.GetValue(tile)) + "]"
+            finalString += "\n\r"
+        print("Iteration Agent Values:")
+        print(finalString)
+
+
+    # Incoming State should be the tile object itself
+    def GetValue(self, state):
         return self.values[state]

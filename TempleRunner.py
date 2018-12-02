@@ -25,6 +25,7 @@ def main():
                 if "VALUE" in choice.upper():
                     game_eng = GameEngine()
                     iterationAgent = ValueIterationAgent(game_eng)
+                    iterationAgent.ShowValuesInGrid()
                 if "POLICY" in choice.upper():
                     game_eng = GameEngine()
                     policyIterationAgent = PolicyIteation(game_eng)
