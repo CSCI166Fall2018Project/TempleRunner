@@ -11,6 +11,9 @@ def main():
 
         # Check for correct responses
         if "PLAY" in choice.upper() or "TEST" in choice.upper():
+            # Has choosen correctly
+            choosenCorrectly = True
+
             # Choose to play
             if "PLAY" in choice.upper():
                 game_eng = GameEngine()
