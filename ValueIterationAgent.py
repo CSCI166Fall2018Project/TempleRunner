@@ -46,7 +46,14 @@ class ValueIterationAgent:
                         self.values[state] = 0
 
             for key in self.values.keys():
-                print(str(key) + " | " + str(self.values[key]))
+                print(str(key)),
+                if (str(key).startswith('Wall')):
+                    print("    "),
+                elif (str(key).startswith('Tile')):
+                    print("    "),
+                elif (str(key).startswith('TrapDoor')):
+                    print(""),
+                print(" | " + str(self.values[key]))
 
         else:
             print(" Please use the GameEngine as the first argument")
