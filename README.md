@@ -36,22 +36,22 @@
 			Run = 1.0 Safe
 				Darts completely miss
 		Trap Door
-			Run = 0.70 Safe | 0.30 Dead 
-				Scramble over before it opens.
-			Walk = 0.20 Safe | 0.80 Dead
-				Likely to fall in
 			Sneak = 0.50 Safe | 0.50 Dead
 				Less likely to fall in
+			Walk = 0.20 Safe | 0.80 Dead
+				Likely to fall in
+			Run = 0.70 Safe | 0.30 Dead 
+				Scramble over before it opens.
 ## Agent Properties
 	CTE = 0.05-0.5 = Chance To Exhaust
 	ETR = 5-0 = Exhausted Turns Remaining
 ## Agent States 
 	Ready (ETR = 0)
 		Run = 1.0 chance to become Tired
-	Tired (ETR = 0, CTT = Between {0.05-0.5)
-		Run = 1.0 chance to increase CTT by 0.05
+	Tired (ETR = 0, CTE = Between {0.05-0.5)
+		Run = 1.0 chance to increase CTE by 0.05
 		Run = CTE chance to become Exhausted
-		Walk | Sneak = 1.0 chance to Reduce CTT by 0.05
+		Walk | Sneak = 1.0 chance to Reduce CTE by 0.05
 	Exhausted (ETR = Between {5-0, CTE = 0.05)
 		Run = 1.0 No Movement
 		Walk | Sneak = 1.0 Move and Reduce ETR by 1
