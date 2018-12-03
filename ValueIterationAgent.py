@@ -3,7 +3,7 @@ from GameEngine import *
 
 class ValueIterationAgent:
 
-    def __init__(self, engine, discount=0.9, iterations=10):
+    def __init__(self, engine, discount=0.9, iterations=1000):
 
         # Keep a reference to the GameEngine
         self.engine = engine
