@@ -56,6 +56,10 @@ class GameEngine:
         if isinstance(state, ExitDoor):
             finalReward += 100
 
+        # Punish the agent for running, because they may become exhausted
+        if cadence is EnumCadence.STR_RUN:
+            finalReward -= 0.5
+
         return finalReward
 
     def GetSurroundingTiles(self):
@@ -87,9 +91,9 @@ class GameEngine:
 
         # Handle when the player is exhausted
         if self.Grid.Player.Exhausted:
-            cadences = [EnumCadence.STR_SNEAK, EnumCadence.STR_WALK]
+            cadences = [EnumCadence.STR_WALK, EnumCadence.STR_SNEAK]
         else:
-            cadences = [EnumCadence.STR_SNEAK, EnumCadence.STR_WALK, EnumCadence.STR_RUN]
+            cadences = [EnumCadence.STR_WALK, EnumCadence.STR_SNEAK, EnumCadence.STR_RUN]
 
         # For all directions
         for dir in directions:
