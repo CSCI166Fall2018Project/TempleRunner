@@ -44,22 +44,12 @@ class ValueIterationAgent:
                         if statePrime not in stateKeys:
                             values_prime[statePrime] = 0.0
                         oldValPrime = values_prime[statePrime]
-                        val_prime = (probability * reward) + (self.discount * oldValPrime)
+                        val_prime = probability * (reward + (self.discount * oldValPrime))
                         prime_values.append(val_prime)
                     if len(prime_values) > 0:
                         self.values[state] = round(max(prime_values), 2)
                     else:
                         self.values[state] = 0
-
-            for key in self.values.keys():
-                print(str(key)),
-                if (str(key).startswith('Wall')):
-                    print("    "),
-                elif (str(key).startswith('Tile')):
-                    print("    "),
-                elif (str(key).startswith('TrapDoor')):
-                    print(""),
-                print(" | " + str(self.values[key]))
 
         else:
             print(" Please use the GameEngine as the first argument")
@@ -68,6 +58,20 @@ class ValueIterationAgent:
         # End Value iteration code
         return
 
+    # Show the values of each tile in a list form
+    def ListValues(self):
+
+        for key in self.values.keys():
+            print(str(key)),
+            if (str(key).startswith('Wall')):
+                print("    "),
+            elif (str(key).startswith('Tile')):
+                print("    "),
+            elif (str(key).startswith('TrapDoor')):
+                print(""),
+            print(" | " + str(self.values[key]))
+
+    # Displays the values in a Grid form
     def ShowValuesInGrid(self):
 
         # Show the game Grid
@@ -81,7 +85,7 @@ class ValueIterationAgent:
             for x in range(0, self.engine.Grid.Size, 1):
                 tile = self.engine.Grid.GetTileAt(x, y, True)
                 if tile:
-                    finalString += "[" + str(self.GetValue(tile)) + "]"
+                    finalString += "[" + str(self.GetValue(tile)) + "]\t"
             finalString += "\n\r"
         print("Iteration Agent Values:")
         print(finalString)
