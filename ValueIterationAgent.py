@@ -3,7 +3,7 @@ from GameEngine import *
 
 class ValueIterationAgent:
 
-    def __init__(self, engine, discount=0.9, iterations=10):
+    def __init__(self, engine, discount=0.5, iterations=100):
 
         # Keep a reference to the GameEngine
         self.engine = engine
@@ -40,11 +40,11 @@ class ValueIterationAgent:
                         # Obtain the sum of Reward(s) + Discount * (P(s'| s,a)*R(s'))
                         reward = engine.GetReward(state, cadence)
                         # For the first run, sometimes the state is not in the array
-                        if statePrime in values_prime.keys():
-                            oldValPrime = values_prime[statePrime]
-                            val_prime = (probability * reward) + (self.discount * oldValPrime)
-                        else:
-                            val_prime = probability * reward
+                        stateKeys = values_prime.keys()
+                        if statePrime not in stateKeys:
+                            values_prime[statePrime] = 0.0
+                        oldValPrime = values_prime[statePrime]
+                        val_prime = (probability * reward) + (self.discount * oldValPrime)
                         prime_values.append(val_prime)
                     if len(prime_values) > 0:
                         self.values[state] = round(max(prime_values), 2)
