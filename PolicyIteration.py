@@ -6,7 +6,7 @@ from GameEngine import *
 
 class PolicyIterationAgent:
 
-    def __init__(self, engine):
+    def __init__(self, engine, discount=0.5, iterations=100):
 
         # Keep a reference to the GameEngine
             self.engine = engine
