@@ -356,8 +356,6 @@ class GameGrid:
 
     # Displays the Whole grid by accessing GetTile() from all tiles
     def ShowGrid(self):
-        print(chr(27) + "[2J")
-        print("")
         finalString = ""
         # Handle Columns
         for y in range(self.Size-1, -1, -1):

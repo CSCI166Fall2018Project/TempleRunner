@@ -26,15 +26,24 @@ def main():
                 choice = raw_input("Choose from: value, policy, qlearn \n\r|> ")
                 if "VALUE" in choice.upper():
                     game_eng = GameEngine()
-                    iterationAgent = ValueIterationAgent(game_eng, 0.75, 100)
+                    iterationAgent = ValueIterationAgent(game_eng, 0.9, 100)
                     print("Values Generated! Would you like to see the Values, or the Policy extract from them?")
                     choice = raw_input("Choose from: values, policy or both.\n\r|> ")
                     if "VALUES" in choice.upper() or "POLICY" in choice.upper() or "BOTH" in choice.upper():
                         if "VALUES" in choice.upper():
+                            # Show the game Grid
+                            print("Game Grid:")
+                            game_eng.Grid.ShowGrid()
                             iterationAgent.ShowValuesInGrid()
                         if "POLICY" in choice.upper():
+                            # Show the game Grid
+                            print("Game Grid:")
+                            game_eng.Grid.ShowGrid()
                             iterationAgent.ShowPolicyFromValues()
                         if "BOTH" in choice.upper():
+                            # Show the game Grid
+                            print("Game Grid:")
+                            game_eng.Grid.ShowGrid()
                             iterationAgent.ShowValuesInGrid()
                             iterationAgent.ShowPolicyFromValues()
                 if "POLICY" in choice.upper():

@@ -40,6 +40,7 @@ class GameEngine:
 
 
     def DisplayGameState(self):
+        system("cls")
         self.Grid.ShowGrid()
         if self.Grid.ShowDescriptions:
             self.DescribeSurroundings()

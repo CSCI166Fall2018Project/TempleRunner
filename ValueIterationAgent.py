@@ -78,10 +78,6 @@ class ValueIterationAgent:
     # Displays the values in a Grid form
     def ShowValuesInGrid(self):
 
-        # Show the game Grid
-        print("Game Grid:")
-        self.engine.Grid.ShowGrid()
-
         finalString = ""
         # Handle Columns
         for y in range(self.engine.Grid.Size-1, -1, -1):
@@ -102,9 +98,6 @@ class ValueIterationAgent:
 
 
     def ShowPolicyFromValues(self):
-        # Show the game Grid
-        print("Game Grid:")
-        self.engine.Grid.ShowGrid()
 
         finalString = ""
         # Handle Columns
