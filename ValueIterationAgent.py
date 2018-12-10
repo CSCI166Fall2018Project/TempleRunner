@@ -1,7 +1,7 @@
 from GameEngine import *
 
 
-class ValueIterationAgent:
+class ValueIterationAgent():
 
     def __init__(self, engine, discount=0.5, iterations=100):
 
@@ -140,4 +140,27 @@ class ValueIterationAgent:
                 if val_prime > bestValue:
                     bestValue = val_prime
                     bestAction = cadence[0] + direction[0]
+            return bestAction
+
+    def GetActionFromState(self, state):
+        # If the state is a wall, it's terminal.
+        if isinstance(state, Wall):
+            return "##"
+        elif isinstance(state, ExitDoor):
+            return "EX"
+        else:
+            # Get all possible actions from this state, and find the best one
+            bestAction = None
+            bestValue = -9999999999
+            for direction, cadence in self.engine.GetAllPossibleActions():
+                valPrime = 0
+                statePrime, probability = self.engine.GetTransitionStateAndProb(direction, cadence)
+                # Obtain the sum of Reward(s) + Discount * (P(s'| s,a)*R(s'))
+                reward = self.engine.GetReward(state, cadence)
+                # For the first run, sometimes the state is not in the array
+                val_prime = probability * (reward + (self.discount * self.values[statePrime]))
+
+                if val_prime > bestValue:
+                    bestValue = val_prime
+                    bestAction = cadence, direction
             return bestAction

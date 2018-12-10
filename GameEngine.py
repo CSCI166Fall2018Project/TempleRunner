@@ -1,5 +1,7 @@
 from Objects import *
 from os import *
+import platform
+from Utils import *
 
 class GameEngine:
     def __init__(self):
@@ -33,16 +35,21 @@ class GameEngine:
             self.PlayerChoice = ()
 
         if self.GameState == EnumGameState.PLAYER_DEAD:
-            print("You have died! Game Over.")
+            ShowWin()
 
         if self.GameState == EnumGameState.PLAYER_WON:
-            print("You have escaped with the treasure!")
+            ShowWin()
 
 
-    def DisplayGameState(self):
-        system("cls")
+    def DisplayGameState(self, describe=True):
+
+        # Check if Mac or PC to clear text
+        if platform.system() == "Windows":
+            system("cls")
+        elif platform.system() == "Darwin":
+            system("clear")
         self.Grid.ShowGrid()
-        if self.Grid.ShowDescriptions:
+        if describe:
             self.DescribeSurroundings()
 
     def GetAllStates(self):

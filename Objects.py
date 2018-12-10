@@ -151,7 +151,7 @@ class Player:
         self.ChanceToExhaust = 0.05
         self.ExhaustedTurns = 0
         self.Cadence = EnumCadence.WALK
-        self.DebugMode = True
+        self.DebugMode = False
 
     def isTired(self):
         return self.IsTired
