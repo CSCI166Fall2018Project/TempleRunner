@@ -35,7 +35,7 @@ class GameEngine:
             self.PlayerChoice = ()
 
         if self.GameState == EnumGameState.PLAYER_DEAD:
-            ShowWin()
+            ShowDeath()
 
         if self.GameState == EnumGameState.PLAYER_WON:
             ShowWin()
